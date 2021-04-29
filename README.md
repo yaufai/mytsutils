@@ -1,3 +1,18 @@
+# getAllMatches
+
+正規表現がマッチするすべての結果を返します。通常の正規表現で利用される`g`修飾子とは異なり、グループなどの情報を失いません。
+
+```ts
+import { getAllMatches } from "@yaufai/mytsutils"
+
+let results = getAllMatches(/(?<language>[a-z]{2})-(?<country>[a-z]{2})/, "ja-jp,en-us")
+
+console.log((actual[0].groups as {[key: string]: string})["language"]) 
+// -> ja
+console.log((actual[1].groups as {[key: string]: string})["country"]) 
+// -> us
+```
+
 # NotImeplementedException
 
 中身はとりあえず実装を後回しにして、先に関数やメソッドの型だけ定義したい場合に使用する独自例外です。
