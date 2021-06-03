@@ -51,3 +51,16 @@ function someFunc(val: SomeEnumType): string {
     }
 }
 ```
+
+# atob/btoa
+
+Base64のエンコードとデコードを行います。
+
+```ts
+import { atob, btoa } from "@yaufai/mytsutils"
+
+console.log(atob("こんにちは、世界！"))
+// -> 44GT44KT44Gr44Gh44Gv44CB5LiW55WM77yB
+console.log(btoa("44GT44KT44Gr44Gh44Gv44CB5LiW55WM77yB"))
+// -> こんにちは、世界！
+```
