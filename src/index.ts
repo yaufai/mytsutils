@@ -1,12 +1,5 @@
-import { NotImplementedException as notImplementedException  } from "./Exceptions/NotImplementedException";
-import nev from "./never"
-import { getAllMatches as getallmatches } from "./RegexpUtils"
-import arrayOperations from "./ArrayOperations/index"
-import { atob as a2b, btoa as b2a } from "./atob-btoa"
-
-export const NotImplementedException = notImplementedException
-export const never = nev
-export const getAllMatches   = getallmatches
-export const ArrayOperations = arrayOperations
-export const atob = a2b
-export const btoa = b2a
+export { NotImplementedException } from "./Exceptions/NotImplementedException";
+export { default as never } from "./never"
+export { getAllMatches } from "./RegexpUtils"
+export { default as ArrayOperations } from "./ArrayOperations/index"
+export { atob, btoa } from "./atob-btoa"
