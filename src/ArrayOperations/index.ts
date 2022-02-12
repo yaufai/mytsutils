@@ -1,7 +1,9 @@
 import { intersperse } from "./intersperse"
+import { cartesian } from "./cartesian"
 
 const ArrayOperations = {
-    intersperse
+    intersperse,
+    cartesian
 }
 
 export default ArrayOperations

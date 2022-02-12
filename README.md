@@ -96,3 +96,26 @@ console.log(atob("こんにちは、世界！"))
 console.log(btoa("44GT44KT44Gr44Gh44Gv44CB5LiW55WM77yB"))
 // -> こんにちは、世界！
 ```
+
+# ArrayOperations
+
+## cartesian
+
+`ArrayOperations.cartesian`は二つの配列を受け取り、そのデカルト積を返します。
+
+```ts
+import { ArrayOperations } from "@yaufai/mytsutils"
+
+console.log(
+    ArrayOperations.cartesian<string, number>([ "a", "b" ], [ 1, 2, 3 ])
+)
+// -> 
+// [
+//     [ "a", 1 ],
+//     [ "a", 2 ],
+//     [ "a", 3 ],
+//     [ "b", 1 ],
+//     [ "b", 2 ],
+//     [ "b", 3 ],
+// ]
+```
