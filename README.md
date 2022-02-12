@@ -119,3 +119,21 @@ console.log(
 //     [ "b", 3 ],
 // ]
 ```
+
+## intersperse
+
+`ArrayOperations.cartesian`は次の二つの引数をとります。
+
+* 割り込ませる値
+* 元の配列
+
+そして、元の配列の隣り合った要素間すべてに「割り込ませる値」を挿入します。
+
+```ts
+import { ArrayOperations } from "@yaufai/mytsutils"
+
+console.log(
+    ArrayOperations.intersperse<number>(0, [1, 2, 3])
+)
+// [ 1, 0, 2, 0, 3 ]
+```
