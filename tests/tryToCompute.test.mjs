@@ -1,10 +1,11 @@
-import assert from "assert"
-import { tryToCompute } from "../src"
+import assert   from "assert"
+import module from "../dist/index.js"
 
+const tryToCompute = module.tryToCompute
 const ModuleName = "tryToCompute"
 
 describe(ModuleName, () => {
-    const detactYear: (x: string) => number = x => {
+    const detactYear = x => {
         const result  = x.match(new RegExp(/\d{4}/))
         if (result === null) {
             throw new Error("No year found!")
@@ -13,7 +14,7 @@ describe(ModuleName, () => {
         }   
     }
     const defaultYear = 2021
-    const avoid       = (yr: number) => yr <= defaultYear
+    const avoid       = (yr) => yr <= defaultYear
     describe("without avoid function", () => {
         const testFunction = tryToCompute(detactYear, defaultYear)
         it("regular case", () => {
