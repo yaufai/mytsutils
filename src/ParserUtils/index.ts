@@ -1,7 +1,9 @@
 import  { printAST } from "./printAST"
+import stringifyCompiler from "./stringifyCompiler"
 
 const ParserUtils = {
-    printAST
+    printAST,
+    stringifyCompiler
 }
 
 export default ParserUtils
