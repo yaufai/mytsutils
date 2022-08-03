@@ -6,7 +6,7 @@ import parser   from "remark-parse"
 
 const { Parsers, ParserUtils } = module
 
-const ModuleName = "Inline Bracket Variable"
+const ModuleName = "Bracket Variable"
 
 describe(ModuleName,  () => {
     const processor = unified()
@@ -19,7 +19,7 @@ describe(ModuleName,  () => {
         return JSON.parse(processor.processSync(text).value)
     }
 
-    it("regular case: default class", () => {
+    it("regular case: inline (default class)", () => {
         const actual   = parse("これは[変数]です")
         const expected = {
             type: "root",
@@ -43,7 +43,7 @@ describe(ModuleName,  () => {
                             }
                         },
                         {
-                            type: "bracketVariable",
+                            type: "bracketVariableInline",
                             value: "変数",
                             class: "クラス",
                             position: {
@@ -102,7 +102,7 @@ describe(ModuleName,  () => {
         assert.deepEqual(actual, expected)
     })
 
-    it("regular case: with class", () => {
+    it("regular case: inline (with class)", () => {
         const actual   = parse("これは[クラス:変数]です")
         const expected = {
             type: "root",
@@ -126,7 +126,7 @@ describe(ModuleName,  () => {
                             }
                         },
                         {
-                            type: "bracketVariable",
+                            type: "bracketVariableInline",
                             value: "変数",
                             class: "クラス",
                             position: {
@@ -185,7 +185,7 @@ describe(ModuleName,  () => {
         assert.deepEqual(actual, expected)
     })
 
-    it("negative case: default class", () => {
+    it("negative case: inline (default class)", () => {
         const actual   = parse("ここには[変数はありません。")
         const expected = {
             type: "root",
@@ -239,7 +239,7 @@ describe(ModuleName,  () => {
         assert.deepEqual(actual, expected)
     })
     
-    it("negative case: with class", () => {
+    it("negative case: inline (with class)", () => {
         const actual   = parse("ここには[クラス:変数はありません。")
         const expected = {
             type: "root",
@@ -287,6 +287,118 @@ describe(ModuleName,  () => {
                     line: 1,
                     column: 19,
                     offset: 18
+                }
+            }
+        }
+        assert.deepEqual(actual, expected)
+    })
+
+    it("regular case: block (default class)", () => {
+        const actual   = parse("![変数]")
+        const expected = {
+            type: "root",
+            children: [
+                {
+                    type: "paragraph",
+                    children: [
+                        {
+                            type: "bracketVariableBlock",
+                            value: "変数",
+                            class: "クラス",
+                            position: {
+                                start: {
+                                    line: 1,
+                                    column: 1,
+                                    offset: 0
+                                },
+                                end: {
+                                    line: 1,
+                                    column: 6,
+                                    offset: 5
+                                }
+                            }
+                        }
+                    ],
+                    position: {
+                        start: {
+                            line: 1,
+                            column: 1,
+                            offset: 0
+                        },
+                        end: {
+                            line: 1,
+                            column: 6,
+                            offset: 5
+                        }
+                    }
+                }
+            ],
+            position: {
+                start: {
+                    line: 1,
+                    column: 1,
+                    offset: 0
+                },
+                end: {
+                    line: 1,
+                    column: 6,
+                    offset: 5
+                }
+            }
+        }
+        assert.deepEqual(actual, expected)
+    })
+    
+    it("regular case: block (default class)", () => {
+        const actual   = parse("![クラス:変数]")
+        const expected = {
+            type: "root",
+            children: [
+                {
+                    type: "paragraph",
+                    children: [
+                        {
+                            type: "bracketVariableBlock",
+                            value: "変数",
+                            class: "クラス",
+                            position: {
+                                start: {
+                                    line: 1,
+                                    column: 1,
+                                    offset: 0
+                                },
+                                end: {
+                                    line: 1,
+                                    column: 10,
+                                    offset: 9
+                                }
+                            }
+                        }
+                    ],
+                    position: {
+                        start: {
+                            line: 1,
+                            column: 1,
+                            offset: 0
+                        },
+                        end: {
+                            line: 1,
+                            column: 10,
+                            offset: 9
+                        }
+                    }
+                }
+            ],
+            position: {
+                start: {
+                    line: 1,
+                    column: 1,
+                    offset: 0
+                },
+                end: {
+                    line: 1,
+                    column: 10,
+                    offset: 9
                 }
             }
         }
