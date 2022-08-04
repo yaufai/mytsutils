@@ -1,5 +1,5 @@
-import buildRemarkBracketVariable from "./remarkBracketVariable";
+import remarkBracketVariable from "./remarkBracketVariable";
 
 export default {
-    buildRemarkBracketVariable
+    remarkBracketVariable
 }
