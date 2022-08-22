@@ -1,12 +1,11 @@
-import { visit } from "unist-util-visit"
 import { Node, Parent } from "unist";
 import { BuildVisitor } from "unist-util-visit/complex-types";
 import { isParagraphNode } from "../../ParserUtils/utils";
 import { splitTextLiteralbyRegex } from "../../ParserUtils/splitTextLiteralByRegex";
 import { Paragraph, Text } from "mdast"
-import { BlockBracketVariable, BuildBracketVariableTransformerOptions, InlineBracketVariable } from "./utils";
+import { BlockBracketVariable, Options, InlineBracketVariable, BracketVariableNode } from "./utils";
 
-export default function buildBracketVariableTransformer (opt: BuildBracketVariableTransformerOptions) {
+export default function buildBracketVariableTransformer (opt: Options) {
     return () => {
         return (tree: Node) => {
             visit(tree, containsBracketVaribale, instantiateVisitor(opt))
@@ -14,11 +13,11 @@ export default function buildBracketVariableTransformer (opt: BuildBracketVariab
     }
 }
 
-function containsBracketVaribale(node: unknown): boolean {
+export function containsBracketVaribale(node: unknown): boolean {
     return isParagraphNode(node)
 }
 
-function instantiateVisitor(opt: BuildBracketVariableTransformerOptions): BuildVisitor<Node, (node: unknown) => void> {
+function instantiateVisitor(opt: Options): BuildVisitor<Node, (node: unknown) => void> {
     return (node: unknown, index: number|null, parent: Parent) => {
         if (isBlockBracketVariable(node)) {
             node.children = [
@@ -38,7 +37,7 @@ function instantiateVisitor(opt: BuildBracketVariableTransformerOptions): BuildV
     }
 }
 
-function createNode(opt: BuildBracketVariableTransformerOptions, t: string, isBlock: boolean) {
+export function createNode(opt: Options, t: string, isBlock: boolean): BracketVariableNode {
     const indexOfSep = t.indexOf(":")
 
     const sizePrefix = isBlock ? 2 : 1

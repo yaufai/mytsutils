@@ -23,8 +23,8 @@ export function isBracketVariableNode(node: unknown): node is BracketVariableNod
         && typeof n.value === "string"
 }
 
-export interface BuildBracketVariableTransformerOptions {
-    defalutClass: string
+export interface Options {
+    defalutClass   : string
     inlineConvertor: (node: BracketVariableNode) => string
-    blockConvertor: (node: BracketVariableNode) => string
+    blockConvertor : (node: BracketVariableNode) => string
 }
