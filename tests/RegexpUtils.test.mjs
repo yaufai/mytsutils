@@ -1,6 +1,7 @@
-import assert from "assert"
-import { getAllMatches } from "../src/index"
+import assert   from "assert"
+import module from "../dist/index.js"
 
+const getAllMatches = module.getAllMatches
 const ModuleName = "RegexpUtils"
 
 describe(ModuleName, () => {
@@ -27,9 +28,9 @@ describe(ModuleName, () => {
             let document = "ja-jp,en-us,zh-cn"
             let actual   = getAllMatches(pattern, document)
 
-            let jajp = actual[0] as { groups: {[key: string]: string} }
-            let enus = actual[1] as { groups: {[key: string]: string} }
-            let zhcn = actual[2] as { groups: {[key: string]: string} }
+            let jajp = actual[0]
+            let enus = actual[1]
+            let zhcn = actual[2]
             assert(
                 jajp.groups["language"] === "ja" &&
                 jajp.groups["country"]  === "jp" &&

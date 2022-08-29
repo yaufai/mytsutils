@@ -1,6 +1,7 @@
-import assert from "assert"
-import { atob, btoa } from "../src/index"
+import assert   from "assert"
+import module from "../dist/index.js"
 
+const { atob, btoa } = module
 const ModuleName = "atob-btoa"
 
 describe(ModuleName, () => {
