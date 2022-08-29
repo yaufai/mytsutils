@@ -2,9 +2,8 @@ import assert   from "assert"
 import module from "../../dist/index.js"
 
 import { unified }  from "unified"
+import { remark  }  from "remark"
 import parser   from "remark-parse"
-import toHast   from "remark-rehype"
-import compiler from "rehype-stringify"
 
 const { Parsers, ParserUtils } = module
 
@@ -12,28 +11,8 @@ const ModuleName = "Bracket Variable"
 
 describe(ModuleName,  () => {
     describe("Markdown generator", () => {
-        const processor = unified()
-            .use(parser)
-            .use(Parsers.remarkBracketVariable.buildBracketVariableTransformer({
-                defalutClass: "クラス",
-                blockConvertor: (node) => `![${node.class}:${node.value}]`,
-                inlineConvertor: (node) => `[${node.class}:${node.value}]`
-            }))
-            .use(toHast, {
-                handlers: {
-                    "bracketVariableInline": Parsers.remarkBracketVariable.buildToHastHandler({
-                        defalutClass: "クラス",
-                        blockConvertor: (node) => `![${node.class}:${node.value}]`,
-                        inlineConvertor: (node) => `[${node.class}:${node.value}]`
-                    }),
-                    "bracketVariableBlock": Parsers.remarkBracketVariable.buildToHastHandler({
-                        defalutClass: "クラス",
-                        blockConvertor: (node) => `![${node.class}:${node.value}]`,
-                        inlineConvertor: (node) => `[${node.class}:${node.value}]`
-                    })
-                }
-            })
-            .use(compiler)
+        const processor = remark()
+            .use(Parsers.remarkBracketVariable())
             .freeze()
         const parse = (text) => {
             return processor.processSync(text)
@@ -41,13 +20,13 @@ describe(ModuleName,  () => {
         
         it("regular case: inline (default class)", () => {
             const actual   = parse("これは[変数]です").value
-            const expected = "<p>これは<span>[クラス:変数]</span>です</p>"
+            const expected = "これは[変数](変数)です\n"
             assert.equal(actual, expected)
         })
 
         it("regular case: block (default class)", () => {
             const actual   = parse("![変数]").value
-            const expected = "<p><div>![クラス:変数]</div></p>"
+            const expected = "[変数](変数)\n"
             assert.equal(actual, expected)
         })
     
@@ -55,7 +34,7 @@ describe(ModuleName,  () => {
     describe("AST generator", () => {
         const processor = unified()
             .use(parser)
-            .use(Parsers.remarkBracketVariable.buildBracketVariableTransformer({ defalutClass: "クラス" }))
+            .use(Parsers.remarkBracketVariable({ defalutClass: "クラス" }))
             .use(ParserUtils.stringifyCompiler)
             .freeze()
         
@@ -87,19 +66,9 @@ describe(ModuleName,  () => {
                                 }
                             },
                             {
-                                type: "bracketVariableInline",
-                                value: "変数",
-                                class: "クラス",
-                                position: {
-                                    start: {
-                                        line: 1,
-                                        column: 4
-                                    },
-                                    end: {
-                                        line: 1,
-                                        column: 8
-                                    }
-                                }
+                                type: "link",
+                                url: "変数",
+                                children: [ { type: "text", value: "変数" }]
                             },
                             {
                                 type: "text",
@@ -170,19 +139,9 @@ describe(ModuleName,  () => {
                                 }
                             },
                             {
-                                type: "bracketVariableInline",
-                                value: "変数",
-                                class: "クラス",
-                                position: {
-                                    start: {
-                                        line: 1,
-                                        column: 4
-                                    },
-                                    end: {
-                                        line: 1,
-                                        column: 12
-                                    }
-                                }
+                                type: "link",
+                                url: "変数",
+                                children: [ { type: "text", value: "変数" }]
                             },
                             {
                                 type: "text",
@@ -346,21 +305,9 @@ describe(ModuleName,  () => {
                         type: "paragraph",
                         children: [
                             {
-                                type: "bracketVariableBlock",
-                                value: "変数",
-                                class: "クラス",
-                                position: {
-                                    start: {
-                                        line: 1,
-                                        column: 1,
-                                        offset: 0
-                                    },
-                                    end: {
-                                        line: 1,
-                                        column: 6,
-                                        offset: 5
-                                    }
-                                }
+                                type: "link",
+                                url: "変数",
+                                children: [ { type: "text", value: "変数" }]
                             }
                         ],
                         position: {
@@ -402,21 +349,9 @@ describe(ModuleName,  () => {
                         type: "paragraph",
                         children: [
                             {
-                                type: "bracketVariableBlock",
-                                value: "変数",
-                                class: "クラス",
-                                position: {
-                                    start: {
-                                        line: 1,
-                                        column: 1,
-                                        offset: 0
-                                    },
-                                    end: {
-                                        line: 1,
-                                        column: 10,
-                                        offset: 9
-                                    }
-                                }
+                                type: "link",
+                                url: "変数",
+                                children: [ { type: "text", value: "変数" }]
                             }
                         ],
                         position: {

@@ -1,28 +1,31 @@
-import buildBracketVariableTransformer, { containsBracketVaribale, createNode } from "./transformToTree"
-import buildToHastHandler from "./transformToMarkdown"
-import { BracketVariableNode, Options } from "./utils"
-import { Node, Parent } from "unist";
+import { containsBracketVaribale, getNewChildren } from "./transformToTree"
+import { isBracketVariableNode, Options } from "./utils"
+import { Node } from "unist";
 import { visit } from "unist-util-visit"
-import { BuildVisitor } from "unist-util-visit/complex-types";
+import transformToMarkdown from "./transformToMarkdown";
 
 export default function remarkBracketVariable(options?: { [O in keyof Options]?: Options[O] }) {
     const opt: Options = {
-        defalutClass: "",
-        inlineConvertor: function (node: BracketVariableNode): string {
-            throw new Error("Function not implemented.")
-        },
-        blockConvertor: function (node: BracketVariableNode): string {
-            throw new Error("Function not implemented.")
-        }
+        defalutCategory: "",
+        compileInline  : (value, _category) => value,
+        compileBlock   : (value, _category) => value,
+        ...options
     }
-    const transformer = (node: unknown) => {
-        // ここのノードはまだ変換されていない。特定もしていない
-        // まずChildrenにBracketNodeをつくる
-        // Filterして変換
+    const transformer = (node: any) => {
+        const children = getNewChildren(opt, node)
+            .map(childNode => {
+                return isBracketVariableNode(childNode)
+                    ? transformToMarkdown(opt, childNode)
+                    : childNode
+            })
+        
+        
+        node.children = children
+
     }
     return () => {
         return (tree: Node) => {
-            visit(tree, containsBracketVaribale, transformer as any)
+            visit(tree, containsBracketVaribale, transformer)
         }
     }
 

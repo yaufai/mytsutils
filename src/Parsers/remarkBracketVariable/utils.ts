@@ -1,12 +1,13 @@
 import { Point } from "unist-util-inspect"
 
-export const InlineBracketVariable = "bracketVariableInline"
-export const BlockBracketVariable  = "bracketVariableBlock"
+export type BracketVariableType
+    = "bracketVariableInline"
+    | "bracketVariableBlock"
 
 export interface BracketVariableNode {
-    type: "bracketVariableInline" | "bracketVariableBlock"
-    class: string
+    type: BracketVariableType
     value: string
+    category: string
     position?: {
         start: Point
         end  : Point
@@ -19,12 +20,14 @@ export function isBracketVariableNode(node: unknown): node is BracketVariableNod
 
     const n = node as BracketVariableNode
     return (n.type === "bracketVariableBlock" || n.type === "bracketVariableInline")
-        && typeof n.class === "string"
-        && typeof n.value === "string"
+        && typeof n.category === "string"
+        && typeof n.value    === "string"
 }
 
+type MarkdownNode = any
+
 export interface Options {
-    defalutClass   : string
-    inlineConvertor: (node: BracketVariableNode) => string
-    blockConvertor : (node: BracketVariableNode) => string
+    defalutCategory  : string
+    compileInline: (value: string, category: string) => (string|MarkdownNode)
+    compileBlock : (value: string, category: string) => (string|MarkdownNode)
 }

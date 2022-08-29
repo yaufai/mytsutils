@@ -27,7 +27,6 @@ export function splitByRegexp(regex: RegExp,  document: string, keepSeparator: b
         } else {
             fraguments  = [...fraguments, head ]
         }
-        
         remaining   = remaining.slice(index + sep.length)
     })
 

@@ -1,51 +1,49 @@
-import { Node, Parent } from "unist";
-import { BuildVisitor } from "unist-util-visit/complex-types";
 import { isParagraphNode } from "../../ParserUtils/utils";
 import { splitTextLiteralbyRegex } from "../../ParserUtils/splitTextLiteralByRegex";
 import { Paragraph, Text } from "mdast"
-import { BlockBracketVariable, Options, InlineBracketVariable, BracketVariableNode } from "./utils";
+import { Options, BracketVariableNode } from "./utils";
 
-export default function buildBracketVariableTransformer (opt: Options) {
-    return () => {
-        return (tree: Node) => {
-            visit(tree, containsBracketVaribale, instantiateVisitor(opt))
-        }
-    }
-}
 
 export function containsBracketVaribale(node: unknown): boolean {
     return isParagraphNode(node)
 }
 
-function instantiateVisitor(opt: Options): BuildVisitor<Node, (node: unknown) => void> {
-    return (node: unknown, index: number|null, parent: Parent) => {
-        if (isBlockBracketVariable(node)) {
-            node.children = [
-                {
-                    ...node.children[0],
-                    ...createNode(opt, (node.children[0] as Text).value, true)
-                } as any
+export function getNewChildren(opt: Options, node: unknown): any[] {
+    if (isBlockBracketVariable(node)) {
+        return [
+            {
+                ...node.children[0],
+                ...createNode(opt, (node.children[0] as Text).value, true)
+            }
+        ]
+    } else if (isParagraphNode(node)) {
+        return node.children.reduce<any[]>((acc, cur: any) => {
+            const additional = cur.type === "text"
+                ? splitTextLiteralbyRegex(cur, /\[([^\]]+)\]/g, (t) => createNode(opt, t, false))
+                : [ cur ]
+            return [
+                ...acc,
+                ...additional
             ]
-        } else if (isParagraphNode(node)) {
-            node.children = node.children.reduce<any[]>((acc, cur: any) => {
-                return [
-                    ...acc,
-                    ...splitTextLiteralbyRegex(cur, /\[([^\]]+)\]/g, (t) => createNode(opt, t, false))
-                ]
-            }, [])
-        }
+        }, [])
     }
+    return (node as { children: any[] }).children
 }
 
-export function createNode(opt: Options, t: string, isBlock: boolean): BracketVariableNode {
+function createNode(opt: Options, t: string, isBlock: boolean): BracketVariableNode {
     const indexOfSep = t.indexOf(":")
 
     const sizePrefix = isBlock ? 2 : 1
-
     return {
-        type : isBlock ? BlockBracketVariable : InlineBracketVariable,
-        value: indexOfSep >= 0 ? t.slice(indexOfSep + 1, t.length - 1) : t.slice(sizePrefix, t.length - 1),
-        class: indexOfSep >= 0 ? t.slice(sizePrefix, indexOfSep)  : opt.defalutClass
+        type : isBlock
+            ? "bracketVariableBlock"
+            : "bracketVariableInline",
+        value   : indexOfSep >= 0
+            ? t.slice(indexOfSep + 1, t.length - 1)
+            : t.slice(sizePrefix, t.length - 1),
+        category: indexOfSep >= 0
+            ? t.slice(sizePrefix, indexOfSep)
+            : opt.defalutCategory
     }
 }
 
