@@ -1,11 +1,20 @@
 import { isParagraphNode } from "../../ParserUtils/utils";
-import { splitTextLiteralbyRegex } from "../../ParserUtils/splitTextLiteralByRegex";
+import parserUtils from "../../ParserUtils";
 import { Paragraph, Text } from "mdast"
 import { Options, BracketVariableNode } from "./utils";
 
+function hasChildren(node: unknown): node is { children: { type: string }[] } {
+    return typeof node === "object" && null !== node && "children" in node
+}
 
 export function containsBracketVaribale(node: unknown): boolean {
-    return isParagraphNode(node)
+    if (hasChildren(node)) {
+        return node.children
+            .filter(n => n.type === "text")
+            .length > 0
+    } else {
+        return false
+    }
 }
 
 export function getNewChildren(opt: Options, node: unknown): any[] {
@@ -16,10 +25,10 @@ export function getNewChildren(opt: Options, node: unknown): any[] {
                 ...createNode(opt, (node.children[0] as Text).value, true)
             }
         ]
-    } else if (isParagraphNode(node)) {
+    } else if (hasChildren(node)) {
         return node.children.reduce<any[]>((acc, cur: any) => {
             const additional = cur.type === "text"
-                ? splitTextLiteralbyRegex(cur, /\[([^\]]+)\]/g, (t) => createNode(opt, t, false))
+                ? parserUtils.splitTextLiteralByRegex(cur, /\[([^\]]+)\]/g, (t) => createNode(opt, t, false))
                 : [ cur ]
             return [
                 ...acc,

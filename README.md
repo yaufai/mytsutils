@@ -1,4 +1,6 @@
-# getAllMatches
+# 正規表現
+
+## getAllMatches
 
 正規表現がマッチするすべての結果を返します。通常の正規表現で利用される`g`修飾子とは異なり、グループなどの情報を失いません。
 
@@ -11,6 +13,26 @@ console.log((actual[0].groups as {[key: string]: string})["language"])
 // -> ja
 console.log((actual[1].groups as {[key: string]: string})["country"]) 
 // -> us
+```
+
+## splitByRegexp
+
+正規表現と文章を与えると、文章を正規表現で分割した文字列のリストを返します。
+
+`keepSeparator`を与えると分割に利用した、正規表現にマッチする箇所も保存されます。
+
+```ts
+import { splitByRegexp } from "@yaufai/mytsutils"
+
+console.log(splitByRegexp(/[1-9]+/, "aa1aa332aa")) 
+// -> [ "aa", "aa", "aa" ]
+```
+
+```ts
+import { splitByRegexp } from "@yaufai/mytsutils"
+
+console.log(splitByRegexp(/[1-9]+/, "aa1aa332aa", true)) 
+// -> [ "aa", "1", "aa", "332", "aa" ]
 ```
 
 # NotImeplementedException
@@ -137,3 +159,97 @@ console.log(
 )
 // [ 1, 0, 2, 0, 3 ]
 ```
+
+# Markdownパーサ
+
+## ParserUtils.printAST
+
+ASTは何も変更せず代わりに現時点でのASTを出力するRemarkプラグインです。主としてデバッグ用に使用します。
+
+```ts
+import { ParserUtils } from "@yaufai/mytsutils"
+
+const processor = remark()
+    .use(ParserUtils.printAST)
+    .freeze()
+processor.processSync(text)
+```
+
+## ParserUtils.splitTextLiteralByRegex
+
+`Text`リテラルノードを正規表現を使って分解します。
+
+これ自体はRemarkプラグインではありませんが、Remarkプラグインを作成するときに有用です。
+
+```ts
+import { ParserUtils } from "@yaufai/mytsutils"
+
+const pattern  = /\s+->\s+/
+const textLiteral = {
+    type: 'text',
+    value: 'aaa -> b'
+}
+console.log(ParserUtils.splitTextLiteralByRegex(
+    textLiteral,
+    pattern
+))
+// [
+//     {
+//         type: 'text',
+//         value: 'aaa'
+//     },
+//     {
+//         type: 'text',
+//         value: ' -> '
+//     },
+//     {
+//         type: 'text',
+//         value: 'b'
+//     }
+// ]
+```
+
+`processor`を与えると、分離に使った正規表現にマッチする箇所をさらに加工することができます。
+
+
+```ts
+import { ParserUtils } from "@yaufai/mytsutils"
+
+const pattern  = /\s+->\s+/
+const textLiteral = {
+    type: 'text',
+    value: 'aaa -> b'
+}
+console.log(ParserUtils.splitTextLiteralByRegex(
+    textLiteral,
+    pattern,
+    (_t) => ({ type: 'text', value: "→" })
+))
+// [
+//     {
+//         type: 'text',
+//         value: 'aaa'
+//     },
+//     {
+//         type: 'text',
+//         value: '→'
+//     },
+//     {
+//         type: 'text',
+//         value: 'b'
+//     }
+// ]
+```
+
+## remarkBracketVariable
+
+`[カテゴリ:変数名]`や`![カテゴリ:変数名]`の形をした領域を別の文字列に変換するRemarkプラグインです。カテゴリは省略することもできますが、取得された場合には変換を出し分けるのに活用できます。
+
+デフォルトでは、変数名をそのまま出力します。
+
+`compileInline`や`compileBlock`を与えることで変換先を変更できます。
+
+- `compileInline<T>: (value: string, category: string) => T|string`
+- `compileBlock<T> : (value: string, category: string) => T|string`
+
+返り値はASTのノードか文字列である必要があり、文字列の場合には自動的にテキストリテラルに変換されます。

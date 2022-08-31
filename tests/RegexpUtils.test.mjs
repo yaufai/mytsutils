@@ -2,6 +2,7 @@ import assert   from "assert"
 import module from "../dist/index.js"
 
 const getAllMatches = module.getAllMatches
+const splitByRegexp = module.splitByRegexp
 const ModuleName = "RegexpUtils"
 
 describe(ModuleName, () => {
@@ -39,6 +40,30 @@ describe(ModuleName, () => {
                 zhcn.groups["language"] === "zh" &&
                 zhcn.groups["country"]  === "cn"
             )
+        })
+    })
+
+    describe("splitByRegexp", () => {
+        it("split the document multiple times", () => {
+            const pattern  = /[1-9]+/
+            const document = "aa1aa332aa"
+            const actual   = splitByRegexp(pattern, document)
+            const expected = [ "aa", "aa", "aa" ]
+            assert.deepEqual(actual, expected)
+        }),
+        it("split and preserve separators", () => {
+            const pattern  = /[1-9]+/
+            const document = "aa1aa332aa"
+            const actual   = splitByRegexp(pattern, document, true)
+            const expected = [ "aa", "1", "aa", "332", "aa" ]
+            assert.deepEqual(actual, expected)
+        }),
+        it("negative case: no match", () => {
+            const pattern  = /b/
+            const document = "aa1aa332aa"
+            const actual   = splitByRegexp(pattern, document)
+            const expected = [ "aa1aa332aa" ]
+            assert.deepEqual(actual, expected)
         })
     })
 })

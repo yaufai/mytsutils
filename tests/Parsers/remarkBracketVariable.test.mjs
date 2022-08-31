@@ -20,13 +20,13 @@ describe(ModuleName,  () => {
         
         it("regular case: inline (default class)", () => {
             const actual   = parse("これは[変数]です").value
-            const expected = "これは[変数](変数)です\n"
+            const expected = "これは変数です\n"
             assert.equal(actual, expected)
         })
 
         it("regular case: block (default class)", () => {
             const actual   = parse("![変数]").value
-            const expected = "[変数](変数)\n"
+            const expected = "変数\n"
             assert.equal(actual, expected)
         })
     
@@ -66,9 +66,8 @@ describe(ModuleName,  () => {
                                 }
                             },
                             {
-                                type: "link",
-                                url: "変数",
-                                children: [ { type: "text", value: "変数" }]
+                                type: "text",
+                                value: "変数",
                             },
                             {
                                 type: "text",
@@ -139,9 +138,8 @@ describe(ModuleName,  () => {
                                 }
                             },
                             {
-                                type: "link",
-                                url: "変数",
-                                children: [ { type: "text", value: "変数" }]
+                                type: "text",
+                                value: "変数"
                             },
                             {
                                 type: "text",
@@ -305,9 +303,8 @@ describe(ModuleName,  () => {
                         type: "paragraph",
                         children: [
                             {
-                                type: "link",
-                                url: "変数",
-                                children: [ { type: "text", value: "変数" }]
+                                type: "text",
+                                value: "変数"
                             }
                         ],
                         position: {
@@ -349,9 +346,8 @@ describe(ModuleName,  () => {
                         type: "paragraph",
                         children: [
                             {
-                                type: "link",
-                                url: "変数",
-                                children: [ { type: "text", value: "変数" }]
+                                type: "text",
+                                value: "変数",
                             }
                         ],
                         position: {

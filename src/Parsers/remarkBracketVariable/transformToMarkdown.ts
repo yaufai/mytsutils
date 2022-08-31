@@ -6,11 +6,7 @@ export default function transformToMarkdown(opt: Options, node: BracketVariableN
         : opt.compileInline(node.value, node.category)
     
     if (typeof result === "string") {
-        return {
-            type: 'link',
-            url : result,
-            children: [{ type: 'text', value: result }]
-        }
+        return { type: 'text', value: result }
     } else {
         return result
     }

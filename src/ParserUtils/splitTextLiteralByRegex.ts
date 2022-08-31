@@ -2,7 +2,7 @@ import { getAllMatches, splitByRegexp } from "../RegexpUtils"
 import { Text } from "mdast"
 import { Point } from "unist-util-inspect"
 
-export function splitTextLiteralbyRegex<T>(text: Text, regex: RegExp, processor?: (t: string) => T): (Text|T)[] {
+export default function splitTextLiteralbyRegex<T>(text: Text, regex: RegExp, processor?: (t: string) => T): (Text|T)[] {
     const allMatches   = getAllMatches(regex, text.value).map(m => m[0])
     const allUnmatched = splitByRegexp(regex, text.value, false)
 
@@ -14,22 +14,23 @@ export function splitTextLiteralbyRegex<T>(text: Text, regex: RegExp, processor?
         }
     }
     function processorUnmatched(t: string, pos: Point|undefined): Text {
-        return {
-            type: "text",
-            value: t,
-            position: pos
-                ? { start: pos, end: transitPosition(t, pos) }
-                : undefined
+        if (pos) {
+            return {
+                type: "text",
+                value: t,
+                position: { start: pos, end: transitPosition(t, pos) }
+            }
+        } else {
+            return {
+                type: "text",
+                value: t,
+            }
         }
+        
     }
 
     const processorMatched = processor
-        ? (t: string, pos: Point|undefined) => ({
-            ...processor(t),
-            position: pos
-                ? { start: pos, end: transitPosition(t, pos) }
-                : undefined
-        })
+        ? processor
         : processorUnmatched
 
     let rtn: (Text|T)[] = []
